@@ -1,9 +1,11 @@
 package QQClient.view;
 
+import QQClient.service.UserClientService;
 import QQClient.utils.Utility;
 
 public class QQView {
     private boolean loop=true;
+    private UserClientService userClientService = new UserClientService(); // 用于登录服务器/注册用户
 
     public static void main(String[] args){
         new QQView().mainMenu();
@@ -25,7 +27,7 @@ public class QQView {
                     System.out.print("Pass word: ");
                     String passwd=Utility.readString(50);
                     // 这里就比较麻烦了，需要到服务端去验证该用户是否合法
-                    if(true){
+                    if(userClientService.checkUser(userId, passwd)){
                         System.out.println("========Welcome "+userId+" =========");
                         while(loop){ // 进入二级菜单
                             System.out.println("\n=========Net Communicate System 2-nd Menu(user: " +userId+")=============");

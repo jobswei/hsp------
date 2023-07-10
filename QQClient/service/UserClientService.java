@@ -19,6 +19,7 @@ public class UserClientService {
     private Socket socket;
 
     public boolean checkUser(String userId, String passwd)    {
+        boolean b=false;
         u.setUserId(userId);
         u.setPasswd(passwd);
 
@@ -31,10 +32,17 @@ public class UserClientService {
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             Message ms=(Message)ois.readObject();
             if(ms.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCEED)){
+                b=true;
                 // 创建一个和服务器端保持通信的线程 -> 创建一个类 ClientConnectServerThread
+                ClientConnectServerThread ccst = new ClientConnectServerThread(socket);
+                // 启动客户端的线程
+                ccst.start();
+                // 这里为了客户端的扩展，将线程放入集合中管理
+                ManageClientConnectServerThread.addClientConnectServerThread(userId, ccst);
                 
             }else{
-
+                // 如果验证不成功，就无法进行后续操作，关闭socket
+                socket.close();
             }
 
         } catch (UnknownHostException e) {
@@ -48,6 +56,7 @@ public class UserClientService {
             e.printStackTrace();
         } 
 
+        return b;
 
     }
 }
