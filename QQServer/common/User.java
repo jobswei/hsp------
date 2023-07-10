@@ -7,6 +7,12 @@ public class User implements Serializable {
     private static final long serialVersionUID=1L; // 增加兼容性
     private String userId;
     private String passwd;
+    public User(){}
+
+    public User(String userId, String passwd) {
+        this.userId = userId;
+        this.passwd = passwd;
+    }
 
     public String getUserId() {
         return userId;
