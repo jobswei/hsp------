@@ -1,0 +1,2 @@
+QQServer.java  line49
+此处有一个bug尚未修复 用Object接收user不会出错，强制转化为User时会报错

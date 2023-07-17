@@ -27,9 +27,16 @@ public class UserClientService {
         try {
             socket = new Socket(InetAddress.getByName("127.0.0.1"), 9999);
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(u); // 发送user对象
+            // oos.writeObject(u); // 发送user对象
+            // oos.flush();
+
+            Message ms_user=new Message();
+            ms_user.setContent(u.getUserId()+" "+u.getPasswd());
+            oos.writeObject(ms_user);
             oos.flush();
+
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            System.out.println("OK");
             Message ms=(Message)ois.readObject();
             if(ms.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCEED)){
                 b=true;
@@ -58,5 +65,19 @@ public class UserClientService {
 
         return b;
 
+    }
+
+    // 向服务器请求在线用户列表
+    public void onlineFriend(){
+        Message message=new Message();
+        message.setMesType(MessageType.MESSAGE_GET_ONLINE_FRIEND);
+        // 放松到服务器
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream
+                (ManageClientConnectServerThread.getClientConnectServerThread(u.getUserId()).getSocket().getOutputStream());
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

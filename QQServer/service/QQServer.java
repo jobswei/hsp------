@@ -45,9 +45,18 @@ public class QQServer {
             while(true){ // 当与某个客户端取得连接后，继续监听
                 Socket socket=ss.accept();
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                User user= (User)ois.readObject();
+
+
+                // 此处有一个bug尚未修复 用Object接收user不会出错，强制转化为User时会报错
+                // User user= (User)ois.readObject();
+                Message ms_user=(Message)ois.readObject();
+                User user=new User(ms_user.getContent().split(" ")[0],ms_user.getContent().split(" ")[1]);
+
+
+                System.out.println("OK");
                 // 创建mseeage，准备回复
                 Message ms= new Message();
+                System.out.println("OK");
                 // 验证
                 if(checkUser(user.getUserId(), user.getPasswd())){
                     ms.setMesType(MessageType.MESSAGE_LOGIN_SUCCEED);
@@ -55,7 +64,7 @@ public class QQServer {
                     oos.writeObject(ms);
                     oos.flush();
                     // 创建对应于客户端的线程
-                    ServerClientThread sct = new ServerClientThread(socket, null);
+                    ServerClientThread sct = new ServerClientThread(socket, user.getUserId());
                     sct.start();
                     // 放入集合中进行管理
                     ManageClientThreads.addServerClientThread(sct, user.getUserId());

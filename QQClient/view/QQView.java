@@ -40,6 +40,7 @@ public class QQView {
                             key=Utility.readString(1);
                             switch(key){
                                 case "1":
+                                    userClientService.onlineFriend();
                                     break;
                                 case "2":
                                     break;
